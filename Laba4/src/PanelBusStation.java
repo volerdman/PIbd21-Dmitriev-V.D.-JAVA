@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-
 import javax.swing.JList;
 import javax.swing.JPanel;
 
