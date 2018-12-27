@@ -19,8 +19,8 @@ public class FormBus {
 	private JButton buttonDown;
 	private JButton buttonLeft;
 	private JButton buttonRight;
-	private JButton buttonCreate;
 	private JButton buttonUp;
+	private JButton buttonCreateBus;
 
 	/**
 	 * Launch the application.
@@ -110,19 +110,33 @@ public class FormBus {
 			RedrawUI();
 		}
 	});
-	
-	buttonCreate = new JButton("Создать");
-	buttonCreate.setBounds(580, 411, 99, 25);
-	panel.add(buttonCreate);
-	buttonCreate.addActionListener(new ActionListener() {
+		
+	buttonCreateBus = new JButton("Обычный автобус");
+	buttonCreateBus.setBounds(511, 386, 168, 25);
+	panel.add(buttonCreateBus);
+	buttonCreateBus.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 			Random rnd = new Random();
-			PanelBus.bus = new Bus(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.RED, Color.WHITE,true,false);
+			PanelBus.bus = new Bus(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.RED);
 			PanelBus.initialization = true;
 			PanelBus.bus.SetPosition(rnd.nextInt(90) + 10, rnd.nextInt(90) + 10, panel.getWidth(), panel.getHeight());
 			RedrawUI();
 		}
 	});
+	
+	JButton buttonCreateDoubleBus = new JButton("Двухэтажный автобус");
+	buttonCreateDoubleBus.setBounds(511, 413, 168, 23);
+	panel.add(buttonCreateDoubleBus);
+	buttonCreateDoubleBus.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			Random rnd = new Random();
+			PanelBus.bus = new DoubleBus(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.RED, Color.BLACK);
+			PanelBus.initialization = true;
+			PanelBus.bus.SetPosition(rnd.nextInt(90) + 10, rnd.nextInt(90) + 10, panel.getWidth(), panel.getHeight());
+			RedrawUI();
+		}
+	});
+
 }
 
 	private void RedrawUI() {
