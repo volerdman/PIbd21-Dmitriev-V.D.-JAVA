@@ -15,7 +15,7 @@ public class PanelBus extends JPanel {
 	
 	public void paint(Graphics g) { 
 		super.paint(g); 
-		if(initialization) {
+		if(bus!=null) {
 			bus.DrawBus(g);
 		}
 	}

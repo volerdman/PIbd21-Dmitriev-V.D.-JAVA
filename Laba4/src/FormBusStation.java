@@ -1,19 +1,30 @@
 import java.awt.Color;
 import java.awt.EventQueue;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class FormBusStation {
 
 	private JFrame frame;
+	private JList listBoxLevels;
+    private DefaultListModel model;
+
 	private JTextField maskedTextBox1;
-	BusStation<ITransport> busstation;
+	MultiLevelBusStation station;
+	private int countLevel = 5;
     private PanelBus pictureBoxTakeBus;
     private PanelBusStation panelBusStation;
 	/**
@@ -47,29 +58,28 @@ public class FormBusStation {
 		frame.setBounds(100, 100, 938, 503);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
 		panelBusStation= new PanelBusStation();
-		panelBusStation.setBackground(Color.GRAY);
-		panelBusStation.setBounds(10, 11, 768, 432);
+		panelBusStation.setBounds(0, 11, 777, 443);
+		panelBusStation.setBackground(new Color(128, 128, 128));
 		frame.getContentPane().add(panelBusStation);
 		
-		busstation = panelBusStation.getBusStation();
+		station = panelBusStation.getBusStation();
 		
 		JPanel pictureBoxBusStation = new JPanel();
 		pictureBoxBusStation.setBounds(0, 0, 778, 466);
 		frame.getContentPane().add(pictureBoxBusStation);
 		
 		JButton buttonSetSimpleBus = new JButton("Bus");
-		buttonSetSimpleBus.setToolTipText("");
 		buttonSetSimpleBus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Color mainColor = JColorChooser.showDialog(null, "Choose a color", Color.GRAY);
 				Bus bus = new Bus(100, 1000, mainColor);
-				int place = busstation.Plus(bus);
-				PanelBus.initialization = true;
+				int place = station.getBusStation(listBoxLevels.getSelectedIndex()).Plus(bus);
 				panelBusStation.repaint();
 			}
 		});
-		buttonSetSimpleBus.setBounds(790, 13, 118, 64);
+		buttonSetSimpleBus.setBounds(790, 141,  118, 41);
 		frame.getContentPane().add(buttonSetSimpleBus);
 		
 		JButton buttonSetBus = new JButton("DoubleBus");
@@ -78,12 +88,11 @@ public class FormBusStation {
 				Color mainColor = JColorChooser.showDialog(null, "Choose a color", Color.GRAY);
 				Color dopColor = JColorChooser.showDialog(null, "Choose a color", Color.GRAY);
 				DoubleBus bus = new DoubleBus(100, 1000, mainColor, dopColor);
-               	int place = busstation.Plus(bus);
-				PanelBus.initialization = true;     
+				int place = station.getBusStation(listBoxLevels.getSelectedIndex()).Plus(bus);					
 				panelBusStation.repaint();
 			}
 		});
-		buttonSetBus.setBounds(790, 104, 118, 78);
+		buttonSetBus.setBounds(790, 182, 118, 41);
 		frame.getContentPane().add(buttonSetBus);
 		
 		JPanel panel = new JPanel();
@@ -92,8 +101,8 @@ public class FormBusStation {
 		panel.setLayout(null);
 		
 		pictureBoxTakeBus = new PanelBus();
-		pictureBoxTakeBus.setBackground(Color.GRAY);
 		pictureBoxTakeBus.setBounds(12, 102, 118, 115);
+		pictureBoxTakeBus.setBackground(new Color(128, 128, 128));
 		panel.add(pictureBoxTakeBus);
 		
 		JLabel label = new JLabel("Забрать автобус");
@@ -113,21 +122,41 @@ public class FormBusStation {
 		buttonTakeBus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!maskedTextBox1.getText().equals("")) {
-					ITransport bus = busstation.Minus(Integer.parseInt(maskedTextBox1.getText()));
-					if (bus != null) {
-						bus.SetPosition(5, 5, pictureBoxTakeBus.getWidth(), pictureBoxTakeBus.getHeight());
-						pictureBoxTakeBus.setBus(bus);
-						pictureBoxTakeBus.repaint();
-						panelBusStation.repaint();
-					} else {				
-						pictureBoxTakeBus.setBus(null);
-						pictureBoxTakeBus.repaint();
-					}
+					ITransport bus = station.getBusStation(listBoxLevels.getSelectedIndex()).Minus(Integer.parseInt(maskedTextBox1.getText()));
+                    if (bus != null) {
+                        bus.SetPosition(5, 5, pictureBoxTakeBus.getWidth(), pictureBoxTakeBus.getHeight());
+                        pictureBoxTakeBus.setBus(bus);
+                        pictureBoxTakeBus.repaint();
+                        panelBusStation.repaint();
+                    } else {
+                    	pictureBoxTakeBus.setBus(null);
+                    	pictureBoxTakeBus.repaint();
 				}
+			}
 			}
 		});
 		buttonTakeBus.setBounds(22, 64, 97, 25);
 		panel.add(buttonTakeBus);
+		
+		listBoxLevels = new JList();
+		listBoxLevels.setBounds(790, 11, 118, 118);
+		frame.getContentPane().add(listBoxLevels);
+        model = new DefaultListModel();
+        for(int i = 0; i < countLevel; i++)
+        {
+        	model.addElement("Уровень " + (i + 1));
+        }
+        listBoxLevels.setModel(model);
+        listBoxLevels.setSelectedIndex(0);
+        panelBusStation.setListLevels(listBoxLevels);   
+        listBoxLevels.addListSelectionListener(new ListSelectionListener() { 
+			@Override 
+			public void valueChanged(ListSelectionEvent e) { 
+				panelBusStation.repaint(); 
+			} 
+		});
 	}
-
+	private void RedrawUI() {
+		panelBusStation.updateUI();		
+	}
 }
